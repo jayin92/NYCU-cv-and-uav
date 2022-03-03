@@ -1,5 +1,4 @@
 import numpy as np
-from tqdm import tqdm
 import cv2
 
     
@@ -24,8 +23,8 @@ for i in range(3*h):
         dy = j - (j-1) // 3 * 3
         dx /= 3
         dy /= 3
-        
-
-
+        px1 = dx * pad[x][y] + (1-dx) * pad[x+1][y]
+        px2 = dx * pad[x][y+1] + (1-dx) * pad[x+1][y+1]
+        res[i][j] = dy * px1 + (1-dy) * px2
 
 cv2.imwrite("lisa_bilinear.jpeg", res)
