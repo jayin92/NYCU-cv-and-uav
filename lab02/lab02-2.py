@@ -35,11 +35,11 @@ for i in range(256):
     if m<sum1*sum2*((mean1-mean2)**2):
         m=sum1*sum2*((mean1-mean2)**2)
         k=i
-        print(k,mean1,mean2)
+        #print(k,mean1,mean2)
 
 for i in range(w):
     for j in range(h):
-        if img[i][j][2]>=i:
+        if img[i][j][2]>=k:
             new[i][j][:]=255
         else:
             new[i][j][:]=0
