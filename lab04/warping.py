@@ -6,8 +6,8 @@ h, w = 480, 640
 bg = cv2.imread("broadway.jpg")
 
 cap_corner = np.array([(0, 0), (479, 0), (479, 639), (0, 639)])
-cap_corner = np.array([(0, 0), (479, 0), (479, 639), (0, 639)])
-print(cap_cor)
+img_corner = np.array([(427, 207), (614, 101), (633, 421), (426, 423)])
+
 cv2.imshow("figure", bg)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
