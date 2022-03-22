@@ -68,7 +68,7 @@ while cap.isOpened() and framen != 0:
     label, area = ConnectedComponents(nmask)
     candi = []
     for k, v in area.items():
-        if v >= 350:
+        if v >= 100:
             candi.append(k)
 
     for item in candi:
@@ -83,7 +83,9 @@ while cap.isOpened() and framen != 0:
                     left = max(left, j)
                     top = min(top, i)
                     bottom = max(bottom, i)
-        cv2.rectangle(img, (right, top), (left, bottom), (0, 255, 0))           
+        cv2.rectangle(img, (right, top), (left, bottom), (0, 255, 0))
+    cv2.imshow("cool", img)
+    cv2.waitKey(33)
     out.write(img)
 
 out.release()
