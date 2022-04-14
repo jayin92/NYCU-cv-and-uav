@@ -9,8 +9,8 @@ from djitellopy import Tello
 from pyimagesearch.pid import PID
 import math
 
-def clamp(x):
-    max_speed_threshold = 50
+def clamp(x, max_speed_threshold = 50):
+    
     if x > max_speed_threshold:
         x = max_speed_threshold
     elif x < -max_speed_threshold:
@@ -99,21 +99,23 @@ while True:
         #     print(tvec)
         #     a+=1
         for i in range(rvec.shape[0]):
-
-            res = cv2.Rodrigues(rvec)[0]
-            z = np.array([0, 0, 1])
-            res = np.matmul(res, z)
-            yaw_update = math.atan2(res[0], res[2]) * 5
+            id = markerids[i][0]
+            if id != 0:
+                continue
+            rotM = np.zeros(shape=(3, 3))
+            cv2.Rodrigues(rvec[i], rotM, jacobian=0)
+            ypr = cv2.RQDecomp3x3(rotM)[0]
+            yaw_update = ypr[1] * 1.2
             x_update = tvec[0,0,0] - 10
             y_update = -(tvec[0,0,1] - (-20))
-            z_update = tvec[0,0,2] - 200
+            z_update = tvec[0,0,2] - 150
             x_update = clamp(x_pid.update(x_update, sleep=0))
             y_update = clamp(y_pid.update(y_update, sleep=0))
             z_update = clamp(z_pid.update(z_update, sleep=0))
             yaw_update = clamp(yaw_pid.update(yaw_update, sleep=0))
             print(x_update, y_update, z_update, yaw_update)
             
-            drone.send_rc_control(0, int(z_update), int(y_update*4), -int(yaw_update*4))
+            drone.send_rc_control(0, int(z_update//2), int(y_update), int(yaw_update))
             
             frame = cv2.aruco.drawDetectedMarkers(frame, markerCorners, markerids)
             frame = cv2.aruco.drawAxis(frame, intrinsic, distortion, rvec[i,:,:], tvec[i,:,:], 10)

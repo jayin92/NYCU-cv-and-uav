@@ -26,7 +26,6 @@ def keyboard(self, key):
     degree = 30
     if key == ord('1'):
         self.takeoff()
-        time.sleep(1.5)
     if key == ord('2'):
         self.land()
         #is_flying = False
@@ -76,7 +75,7 @@ f.release()
 x_pid = PID(kP=0.7, kI=0.0001, kD=0.1)
 y_pid = PID(kP=0.7, kI=0.0001, kD=0.1)
 z_pid = PID(kP=0.7, kI=0.0001, kD=0.1)
-yaw_pid = PID(kP=0.7, kI=0.001, kD=0.75)
+yaw_pid = PID(kP=0.7, kI=0.0001, kD=0.1)
 
 x_pid.initialize()
 y_pid.initialize()
@@ -85,7 +84,7 @@ yaw_pid.initialize()
 
 dictionary = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)
 parameters = cv2.aruco.DetectorParameters_create()
-hasRead = False
+hasRead5 = False
 while True:
     frame = drone.get_frame_read()
     frame = frame.frame
@@ -94,56 +93,109 @@ while True:
     key = cv2.waitKey(1)
     h, w = frame.shape[:2]
     markerCorners, markerids, rejectedCandidates = cv2.aruco.detectMarkers(frame, dictionary, parameters = parameters)
+    x_update = 0
+    y_update = 0
+    z_update = 0
+    yaw_update = 0
     if markerids is not None:
-        hasRead = True
         rvec, tvec, _objPoints = cv2.aruco.estimatePoseSingleMarkers(markerCorners, 15, intrinsic, distortion)
         for i in range(rvec.shape[0]):
             id = markerids[i][0]
-            if id == 5:
+            if id == 1:
                 rotM = np.zeros(shape=(3, 3))
                 cv2.Rodrigues(rvec[i], rotM, jacobian=0)
                 ypr = cv2.RQDecomp3x3(rotM)[0]
                 yaw_update = ypr[1] * 1.2
-                x_update = tvec[i,0,0] - 30
-                y_update = -(tvec[i,0,1] - (-20))
-                z_update = tvec[i,0,2] - 50
-                if z_update <= 35:
-                    drone.send_rc_control(-40, 0, 0, 0)
-                    time.sleep(0.75)
-                print(z_update)
+                x_update = tvec[i,0,0] - (10)
+                y_update = -(tvec[i,0,1] - (-50))
+                z_update = tvec[i,0,2] - 75
+                if abs(z_update) <= 15:
+                    drone.send_rc_control(0, 0, -80, 0)
+                    time.sleep(1)
+                    drone.send_rc_control(-15, 100, 0, 0)
+                    time.sleep(3.5)
+                    drone.send_rc_control(0, 0, 80, 0)
+                    time.sleep(1)
+                    drone.send_rc_control(0, 0, 0, 0)
+                    break
+                x_update = clamp(x_pid.update(x_update, sleep=0))
+                y_update = clamp(y_pid.update(y_update, sleep=0))
+                z_update = clamp(z_pid.update(z_update, sleep=0)) * 1.8
+                yaw_update = 0
+                break
+            elif id == 0:
+                rotM = np.zeros(shape=(3, 3))
+                cv2.Rodrigues(rvec[i], rotM, jacobian=0)
+                ypr = cv2.RQDecomp3x3(rotM)[0]
+                yaw_update = ypr[1] * 1.75
+                x_update = tvec[i,0,0] - 10
+                y_update = -(tvec[i,0,1] + 10) * 2
+                z_update = tvec[i,0,2] - 85
                 x_update = clamp(x_pid.update(x_update, sleep=0))
                 y_update = clamp(y_pid.update(y_update, sleep=0))
                 z_update = clamp(z_pid.update(z_update, sleep=0))
                 yaw_update = clamp(yaw_pid.update(yaw_update, sleep=0))
-                
                 break
-            elif id == 3:
-                res = cv2.Rodrigues(rvec[i])[0]
-                z = np.array([0.0, 0.0, 1.0], dtype=np.float32)
-                res = np.matmul(res, z)
-                yaw_update = clamp(math.atan2(res[0], res[2]), 2)
-                x_update = tvec[i,0,0] - 30
+            elif id == 5:
+                rotM = np.zeros(shape=(3, 3))
+                cv2.Rodrigues(rvec[i], rotM, jacobian=0)
+                ypr = cv2.RQDecomp3x3(rotM)[0]
+                yaw_update = ypr[1] * 1.5
+                x_update = tvec[i,0,0] - 10
+                y_update = -(tvec[i,0,1] - (-10))
+                z_update = (tvec[i,0,2] - 50) * 0.75
+                if z_update <= 27:
+                    hasRead5 = True
+                    drone.send_rc_control(-35, 0, 0, 0)
+                    time.sleep(0.5)
+                    drone.send_rc_control(0, 0, 0, 0)
+                x_update = clamp(x_pid.update(x_update, sleep=0))
+                y_update = clamp(y_pid.update(y_update, sleep=0))
+                z_update = clamp(z_pid.update(z_update, sleep=0))
+                yaw_update = clamp(yaw_pid.update(yaw_update, sleep=0))
+                break
+            elif id == 3 and hasRead5:
+                rotM = np.zeros(shape=(3, 3))
+                cv2.Rodrigues(rvec[i], rotM, jacobian=0)
+                ypr = cv2.RQDecomp3x3(rotM)[0]
+                yaw_update = ypr[1] * 1.5
+                x_update = tvec[i,0,0] + 10
                 y_update = -(tvec[i,0,1] - (-20))
-                z_update = tvec[i,0,2] - 50
-                if z_update <= 35:
+                z_update = (tvec[i,0,2] - 50) * 0.75
+                if z_update <= 27:
                     drone.send_rc_control(40, 0, 0, 0)
                     time.sleep(1)
-                    drone.send_rc_control(0, 40, 0, 0)
-                    time.sleep(1.25)
-                x_update = clamp(x_pid.update(x_update, sleep=0))
-                y_update = clamp(y_pid.update(y_update, sleep=0))
-                z_update = clamp(z_pid.update(z_update, sleep=0))
-                yaw_update = clamp(yaw_pid.update(yaw_update, sleep=0))
-                
-        drone.send_rc_control(int(x_update//2), int(z_update//2), int(y_update*2), -int(yaw_update*9))
+                    drone.send_rc_control(0, 40, 0, -40)
+                    time.sleep(1.5)
+                    drone.send_rc_control(0, 0, 0, 0)
+                    
+                break
+            elif id == 4:
+                rotM = np.zeros(shape=(3, 3))
+                cv2.Rodrigues(rvec[i], rotM, jacobian=0)
+                ypr = cv2.RQDecomp3x3(rotM)[0]
+                yaw_update = ypr[1] * 1.2
+                x_update = tvec[i,0,0] + 8
+                y_update = -(tvec[i,0,1]-10)
+                z_update = (tvec[i,0,2] - 75) * 0.5
+                if abs(z_update) <= 10 and abs(x_update) <= 20:
+                    drone.send_rc_control(0, 0, 0, 0)
+                    drone.land()
+                    drone.send_rc_control(0, 0, 0, 0)
+                break
+
+
+        x_update = clamp(x_pid.update(x_update, sleep=0))
+        y_update = clamp(y_pid.update(y_update, sleep=0))
+        z_update = clamp(z_pid.update(z_update, sleep=0))
+        yaw_update = clamp(yaw_pid.update(yaw_update, sleep=0))                
+        drone.send_rc_control(int(x_update), int(z_update), int(y_update), int(yaw_update))
             
         frame = cv2.aruco.drawDetectedMarkers(frame, markerCorners, markerids)
         frame = cv2.aruco.drawAxis(frame, intrinsic, distortion, rvec[i,:,:], tvec[i,:,:], 10)
         cv2.putText(frame,"x = "+str(round(tvec[i,0,0], 2))+", y = "+str(round(tvec[i,0,1], 2))+", z = "+str(round(tvec[i,0,2], 2)), (0,64), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0),2,cv2.LINE_AA)
         cv2.imshow("",frame)
         key = cv2.waitKey(1)
-    elif drone.is_flying and hasRead == False:
-        drone.send_rc_control(0, 0, 50, 0)
     elif drone.is_flying:
         drone.send_rc_control(0, 0, 0, 0)
     if key != -1:
