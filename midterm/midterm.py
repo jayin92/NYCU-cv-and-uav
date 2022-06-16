@@ -26,9 +26,9 @@ def keyboard(self, key):
     degree = 30
     if key == ord('1'):
         self.takeoff()
+        time.sleep(3)
     if key == ord('2'):
         self.land()
-        #is_flying = False
     if key == ord('3'):
         self.send_rc_control(0, 0, 0, 0)
         print("stop!!!!")
@@ -61,7 +61,7 @@ def keyboard(self, key):
         print(height)
     if key == ord('6'):
         battery = self.get_battery()
-        print (battery)
+        print(battery)
 
 
 drone = Tello()
@@ -97,25 +97,25 @@ while True:
     y_update = 0
     z_update = 0
     yaw_update = 0
-    if markerids is not None:
+    if markerids is not None and drone.is_flying:
         rvec, tvec, _objPoints = cv2.aruco.estimatePoseSingleMarkers(markerCorners, 15, intrinsic, distortion)
         for i in range(rvec.shape[0]):
             id = markerids[i][0]
-            if id == 1:
+            if  id == 1:
                 rotM = np.zeros(shape=(3, 3))
                 cv2.Rodrigues(rvec[i], rotM, jacobian=0)
                 ypr = cv2.RQDecomp3x3(rotM)[0]
                 yaw_update = ypr[1] * 1.2
-                x_update = tvec[i,0,0] - (10)
-                y_update = -(tvec[i,0,1] - (-50))
-                z_update = tvec[i,0,2] - 75
-                if abs(z_update) <= 15:
+                x_update = (tvec[i,0,0] - (10)) * 2
+                y_update = -(tvec[i,0,1] - (-50)) * 1.5
+                z_update = (tvec[i,0,2] - 50) * 0.8
+                if abs(z_update) <= 30 and abs(x_update) <= 25:
                     drone.send_rc_control(0, 0, -80, 0)
                     time.sleep(1)
-                    drone.send_rc_control(-15, 100, 0, 0)
-                    time.sleep(3.5)
-                    drone.send_rc_control(0, 0, 80, 0)
-                    time.sleep(1)
+                    drone.send_rc_control(0, 0, 0, 0)
+                    time.sleep(0.25)
+                    drone.send_rc_control(-30, 100, 0, 0)
+                    time.sleep(6.5)
                     drone.send_rc_control(0, 0, 0, 0)
                     break
                 x_update = clamp(x_pid.update(x_update, sleep=0))
@@ -144,9 +144,9 @@ while True:
                 x_update = tvec[i,0,0] - 10
                 y_update = -(tvec[i,0,1] - (-10))
                 z_update = (tvec[i,0,2] - 50) * 0.75
-                if z_update <= 27:
+                if abs(z_update) <= 24 and abs(x_update) <= 20:
                     hasRead5 = True
-                    drone.send_rc_control(-35, 0, 0, 0)
+                    drone.send_rc_control(-25, 0, 0, 0)
                     time.sleep(0.5)
                     drone.send_rc_control(0, 0, 0, 0)
                 x_update = clamp(x_pid.update(x_update, sleep=0))
@@ -161,9 +161,9 @@ while True:
                 yaw_update = ypr[1] * 1.5
                 x_update = tvec[i,0,0] + 10
                 y_update = -(tvec[i,0,1] - (-20))
-                z_update = (tvec[i,0,2] - 50) * 0.75
-                if z_update <= 27:
-                    drone.send_rc_control(40, 0, 0, 0)
+                z_update = (tvec[i,0,2] - 50) * 0.65
+                if abs(z_update) <= 27 and abs(x_update) <= 20:
+                    drone.send_rc_control(50, 0, 0, 0)
                     time.sleep(1)
                     drone.send_rc_control(0, 40, 0, -40)
                     time.sleep(1.5)

@@ -1,0 +1,25 @@
+﻿  main.cpp
+C:\Users\jayinnn\Yolo_mark\main.cpp(144,1): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
+C:\Users\jayinnn\Yolo_mark\main.cpp(145,1): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
+C:\Users\jayinnn\Yolo_mark\main.cpp(151,1): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
+C:\Users\jayinnn\Yolo_mark\main.cpp(295,36): warning C4244: '正在初始化': 將 'double' 轉換為 'int'，由於類型不同，可能導致資料遺失
+C:\Users\jayinnn\Yolo_mark\main.cpp(295,27): warning C4244: '正在初始化': 將 'double' 轉換為 'const int'，由於類型不同，可能導致資料遺失
+C:\Users\jayinnn\Yolo_mark\main.cpp(303,48): warning C4244: '=': 將 'unsigned long' 轉換為 'float'，由於類型不同，可能導致資料遺失
+C:\Users\jayinnn\Yolo_mark\main.cpp(306,112): warning C4267: '=': 將 'size_t' 轉換為 'int'，資料可能遺失
+C:\Users\jayinnn\Yolo_mark\main.cpp(354,88): warning C4267: '=': 將 'size_t' 轉換為 'int'，資料可能遺失
+C:\Users\jayinnn\Yolo_mark\main.cpp(497,77): warning C4267: '正在初始化': 將 'size_t' 轉換為 'int'，資料可能遺失
+C:\Users\jayinnn\Yolo_mark\main.cpp(497,77): warning C4267: '正在初始化': 將 'size_t' 轉換為 'const int'，資料可能遺失
+C:\Users\jayinnn\Yolo_mark\main.cpp(570,62): warning C4267: '正在初始化': 將 'size_t' 轉換為 'int'，資料可能遺失
+C:\Users\jayinnn\Yolo_mark\main.cpp(570,62): warning C4267: '正在初始化': 將 'size_t' 轉換為 'const int'，資料可能遺失
+C:\Users\jayinnn\Yolo_mark\main.cpp(645,61): warning C4267: '正在初始化': 將 'size_t' 轉換為 'int'，資料可能遺失
+C:\Users\jayinnn\Yolo_mark\main.cpp(645,61): warning C4267: '正在初始化': 將 'size_t' 轉換為 'const int'，資料可能遺失
+C:\Users\jayinnn\Yolo_mark\main.cpp(706,40): warning C4244: '正在初始化': 將 'float' 轉換為 'int'，由於類型不同，可能導致資料遺失
+C:\Users\jayinnn\Yolo_mark\main.cpp(706,21): warning C4244: '正在初始化': 將 'float' 轉換為 'const int'，由於類型不同，可能導致資料遺失
+C:\Users\jayinnn\Yolo_mark\main.cpp(707,40): warning C4244: '正在初始化': 將 'float' 轉換為 'int'，由於類型不同，可能導致資料遺失
+C:\Users\jayinnn\Yolo_mark\main.cpp(707,21): warning C4244: '正在初始化': 將 'float' 轉換為 'const int'，由於類型不同，可能導致資料遺失
+C:\Users\jayinnn\Yolo_mark\main.cpp(814,40): warning C4267: '=': 將 'size_t' 轉換為 'int'，資料可能遺失
+  正在產生程式碼
+  Previous IPDB not found, fall back to full compilation.
+  All 983 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  已完成程式碼產生
+  yolo_mark.vcxproj -> C:\Users\jayinnn\Yolo_mark\x64\Release\yolo_mark.exe
